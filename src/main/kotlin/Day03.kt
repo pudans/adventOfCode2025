@@ -6,7 +6,11 @@ typealias Matrix<T> = List<List<T>>
 class Day03 : Base<Matrix<Int>, Int>(3) {
 
     override fun part1(input: Matrix<Int>): Int {
-        return input.sumOf { foundMax(it) }
+        return input.take(1).sumOf {
+            val r = foundMax2(it, -1, 2, sum = 0, lvl = 0)
+            println("result $r")
+            r
+        }
     }
 
     private fun foundMax(input: List<Int>): Int {
@@ -20,6 +24,17 @@ class Day03 : Base<Matrix<Int>, Int>(3) {
         return result
     }
 
+    private fun foundMax2(input: List<Int>, i: Int, len: Int, sum: Int, lvl: Int): Int {
+        println("foundMax2 $input $i $len $sum")
+        if (lvl == len) return sum
+        return buildList {
+            for (j in (i + 1)..(input.size - (len - i))) {
+                val newSum = sum * 10 + input[j]
+                add(foundMax2(input, j, len, newSum, lvl + 1))
+            }
+        }.max()
+    }
+
     override fun part2(input: Matrix<Int>): Int {
         return 0
     }
@@ -30,5 +45,5 @@ class Day03 : Base<Matrix<Int>, Int>(3) {
 }
 
 fun main() {
-    Day03().submitAll()
+    Day03().submitPart1TestInput()
 }
