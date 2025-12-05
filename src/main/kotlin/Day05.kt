@@ -1,18 +1,46 @@
 import java.io.File
+import java.math.BigInteger
+import kotlin.math.max
+import kotlin.math.min
 
-class Day05 : Base<Day05.Data, Int>(5) {
+class Day05 : Base<Day05.Data, Long>(5) {
 
     data class Data(
         val ranges: List<LongRange>,
         val values: List<Long>
     )
 
-    override fun part1(input: Data): Int {
-        return 0
+    override fun part1(input: Data): Long =
+        input.values.count { value ->
+            input.ranges.any { range -> range.contains(value) }
+        }.toLong()
+
+    override fun part2(input: Data): Long {
+        var loop = true
+        var input = input.ranges.sortedBy { it.first }.toMutableList()
+        while (loop) {
+            val result = unite(input)
+            loop = result
+//            input = result.toMutableList()
+        }
+        println(input.toString())
+        return input.sumOf { it.last - it.first }
     }
 
-    override fun part2(input: Data): Int {
-        return 0
+    private fun unite(input: MutableList<LongRange>): Boolean {
+        println("asdasd $input")
+        for (i in 0..<input.lastIndex) {
+            for (j in (i+1)..input.lastIndex) {
+                if (input[i].last in input[j] || input[i].first in input[j] || input[i].first == input[j].first || input[i].last == input[j].last) {
+                    println("asdasd $i $j")
+                    input.add(LongRange(min(input[i].first, input[j].first), max(input[i].last, input[j].last)))
+                    input.removeAt(i)
+                    input.removeAt(j)
+                    return true
+                }
+            }
+        }
+        return false
     }
 
     override fun mapInputData(file: File): Data {
@@ -32,5 +60,5 @@ class Day05 : Base<Day05.Data, Int>(5) {
 }
 
 fun main() {
-    Day05().submitAll()
+    Day05().submitPart2Input()
 }
