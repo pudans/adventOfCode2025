@@ -18,7 +18,19 @@ class Day06 : Base<List<Day06.Data>, Long>(6) {
     }
 
     override fun part2(input: List<Data>): Long {
-        return 0L
+        return input.sumOf { data ->
+            val len = data.values.maxOf { it.length }
+            val values = mutableListOf<Long>()
+            for (i in 0..<len) {
+                var dd = ""
+                data.values.forEach { str -> dd += str[i] }
+                values.add(dd.filter { it != ' ' }.toLong())
+            }
+            when (data.operation) {
+                '*' -> values.fold(1L) { acc, lng -> acc * lng }
+                else -> values.sum()
+            }
+        }
     }
 
     override fun mapInputData(file: File): List<Data> {
