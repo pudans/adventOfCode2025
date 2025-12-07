@@ -1,7 +1,11 @@
 import utils.PointX
+import utils.println
 import java.io.File
+import java.util.LinkedList
+import java.util.Queue
+import java.util.TreeMap
 
-class Day07 : Base<Day07.Data, Int>(7) {
+class Day07 : Base<Day07.Data, Long>(7) {
 
     data class Data(
         val start: PointX,
@@ -10,7 +14,12 @@ class Day07 : Base<Day07.Data, Int>(7) {
         val height: Int
     )
 
-    override fun part1(input: Data): Int {
+    data class TreeNode(
+        val point: PointX,
+        val nodes: MutableList<TreeNode>
+    )
+
+    override fun part1(input: Data): Long {
         val splits = mutableSetOf<PointX>()
         val beams = mutableSetOf<PointX>()
         beams.add(input.start)
@@ -28,11 +37,35 @@ class Day07 : Base<Day07.Data, Int>(7) {
                 }
             }
         }
-        return splits.size
+        return splits.size.toLong()
     }
 
-    override fun part2(input: Data): Int {
-        return 0
+    val pass: Queue<PointX> = LinkedList()
+
+    override fun part2(input: Data): Long {
+        var result = 0L
+        pass.add(input.start)
+        while (pass.isNotEmpty()) {
+            val pointToWalk = pass.remove()
+            if (walk(input, pointToWalk)) {
+                result++
+            }
+        }
+        return result
+    }
+
+
+    private fun walk(input: Data, point: PointX): Boolean {
+        if (point.x == input.height - 1 && point.y >= 0 && point.y < input.width) {
+            return true
+        }
+        if (input.splitter.contains(point)) {
+            pass.add(PointX(point.x + 1, point.y + 1))
+            pass.add(PointX(point.x + 1, point.y - 1))
+        } else {
+            pass.add(PointX(point.x + 1, point.y))
+        }
+        return false
     }
 
     override fun mapInputData(file: File): Data {
@@ -56,5 +89,5 @@ class Day07 : Base<Day07.Data, Int>(7) {
 }
 
 fun main() {
-    Day07().submitAll()
+    Day07().submitPart2Input()
 }
