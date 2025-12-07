@@ -11,7 +11,24 @@ class Day07 : Base<Day07.Data, Int>(7) {
     )
 
     override fun part1(input: Data): Int {
-        return 0
+        val splits = mutableSetOf<PointX>()
+        val beams = mutableSetOf<PointX>()
+        beams.add(input.start)
+
+        for (i in 1..<input.height) {
+            for (j in 0..<input.width) {
+                val isSplitter = input.splitter.contains(PointX(i, j))
+                val isBeam = beams.contains(PointX(i - 1, j))
+                if (isSplitter && isBeam) {
+                    beams.add(PointX(i, j - 1))
+                    beams.add(PointX(i, j + 1))
+                    splits.add(PointX(i, j))
+                } else if (isBeam) {
+                    beams.add(PointX(i, j))
+                }
+            }
+        }
+        return splits.size
     }
 
     override fun part2(input: Data): Int {
